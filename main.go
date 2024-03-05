@@ -5,7 +5,7 @@ import (
 	"net/http"
 )
 
-type Router struct{}
+/*type Router struct{}
 
 func (router Router) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	switch r.URL.Path {
@@ -16,6 +16,12 @@ func (router Router) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	default:
 		http.Error(w, "Page not found", http.StatusNotFound)
 	}
+}*/
+
+type HandlerFunc func(w http.ResponseWriter, r *http.Request)
+
+func (f HandlerFunc) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	f(w, r)
 }
 
 func pathHandler(w http.ResponseWriter, r *http.Request) {
@@ -40,7 +46,6 @@ func contactHandler(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprint(w, "<h1>Cobtact Page</h1><p>To get in touch, email me at <a href=\"mailto:peppelin@gmail.com\">peppelin@gmail.com</a>")
 }
 func main() {
-	var router Router
 	fmt.Println("Starting server on :3000")
-	http.ListenAndServe(":3000", router)
+	http.ListenAndServe(":3000", http.HandlerFunc(pathHandler))
 }
