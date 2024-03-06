@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"github.com/go-chi/chi/v5"
+	"github.com/go-chi/chi/v5/middleware"
 	"net/http"
 )
 
@@ -66,6 +67,13 @@ func homeHandler(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprint(w, "<h1>Welcome to my awesome site!</h1>")
 }
 
+func galleryHandler(w http.ResponseWriter, r *http.Request) {
+	//w.Header().Set("Content-Type", "text/plain")
+	id := chi.URLParam(r, "id")
+	w.Header().Set("Content-Type", "text/html; charset=utf-8")
+	w.Write([]byte(fmt.Sprintf("ID: %s\n", id)))
+}
+
 func contactHandler(w http.ResponseWriter, r *http.Request) {
 	//w.Header().Set("Content-Type", "text/plain")
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
@@ -73,9 +81,11 @@ func contactHandler(w http.ResponseWriter, r *http.Request) {
 }
 func main() {
 	r := chi.NewRouter()
+	r.Use(middleware.Logger)
 	r.Get("/", homeHandler)
 	r.Get("/contact", contactHandler)
 	r.Get("/faq", faqHandler)
+	r.Get("/gallery/{id}", galleryHandler)
 	r.NotFound(func(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Page NOT Found", http.StatusNotFound)
 	})
