@@ -4,7 +4,10 @@ import (
 	"fmt"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
+	"html/template"
+	"log"
 	"net/http"
+	"path/filepath"
 )
 
 /*type Router struct{}
@@ -64,7 +67,19 @@ func faqHandler(w http.ResponseWriter, r *http.Request) {
 func homeHandler(w http.ResponseWriter, r *http.Request) {
 	//w.Header().Set("Content-Type", "text/plain")
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
-	fmt.Fprint(w, "<h1>Welcome to my awesome site!</h1>")
+	tplPath := filepath.Join("templates", "home.gohtml")
+	tpl, err := template.ParseFiles(tplPath)
+	if err != nil {
+		log.Printf("parsing the template: %v", err)
+		http.Error(w, "There was an error parsing the template.", http.StatusInternalServerError)
+		return
+	}
+	err = tpl.Execute(w, nil)
+	if err != nil {
+		log.Printf("executing the template: %v", err)
+		http.Error(w, "There was an error executing the template.", http.StatusInternalServerError)
+		return
+	}
 }
 
 func galleryHandler(w http.ResponseWriter, r *http.Request) {
