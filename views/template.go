@@ -28,3 +28,10 @@ func Parse(filepath string) (Template, error) {
 	}
 	return Template{htmlTpl: htmlTpl}, nil
 }
+
+func Must(t Template, err error) Template {
+	if err != nil {
+		panic(err)
+	}
+	return t
+}
