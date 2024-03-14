@@ -5,9 +5,9 @@ import (
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/peppelin/lenslocked/controllers"
+	"github.com/peppelin/lenslocked/templates"
 	"github.com/peppelin/lenslocked/views"
 	"net/http"
-	"path/filepath"
 )
 
 func main() {
@@ -15,14 +15,9 @@ func main() {
 
 	r.Use(middleware.Logger)
 
-	tpl := views.Must(views.Parse(filepath.Join("templates", "home.gohtml")))
-	r.Get("/", controllers.StaticHandler(tpl))
-
-	tpl = views.Must(views.Parse(filepath.Join("templates", "contact.gohtml")))
-	r.Get("/contact", controllers.StaticHandler(tpl))
-
-	tpl = views.Must(views.Parse(filepath.Join("templates", "faq.gohtml")))
-	r.Get("/faq", controllers.StaticHandler(tpl))
+	r.Get("/", controllers.StaticHandler(views.Must(views.ParseFS(templates.FS, "home.gohtml"))))
+	r.Get("/contact", controllers.StaticHandler(views.Must(views.ParseFS(templates.FS, "contact.gohtml"))))
+	r.Get("/faq", controllers.StaticHandler(views.Must(views.ParseFS(templates.FS, "faq.gohtml"))))
 
 	r.NotFound(func(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Page NOT Found", http.StatusNotFound)
